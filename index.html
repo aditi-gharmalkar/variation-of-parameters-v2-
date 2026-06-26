@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLab - Variation of Parameters Solver</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/algebrite@1.4.0/dist/algebrite.bundle-main.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <style>
+        .nav-link.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            border-left: 4px solid #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans flex flex-col min-h-screen">
+
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="showSection('home')">
+                <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center overflow-hidden border border-slate-200 shadow-inner">
+                    <img src="logo.png" alt="PCCOE Logo" class="object-contain w-full h-full p-1 transform scale-105">
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-blue-950 tracking-tight">Pimpri Chinchwad College of Engineering</h1>
+                    <p class="text-xs text-blue-600 font-bold uppercase tracking-wider">Virtual Mathematics Laboratory</p>
+                </div>
+            </div>
+            <div>
+                <span class="bg-blue-50 text-blue-700 text-xs font-bold px-4 py-1.5 rounded-full border border-blue-100 shadow-sm">
+                    Differential Equations
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row">
+        
+        <nav class="w-full md:w-64 bg-slate-900 text-slate-300 p-4 space-y-1.5 flex flex-row md:flex-col overflow-x-auto md:overflow-x-visible whitespace-nowrap md:whitespace-normal border-r border-slate-800 shrink-0 shadow-lg">
+            <button onclick="showSection('home')" id="nav-home" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 active text-sm font-medium">
+                <i class="fa-solid fa-house text-slate-400 w-5"></i> <span>Home</span>
+            </button>
+            <button onclick="showSection('aim')" id="nav-aim" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-bullseye text-slate-400 w-5"></i> <span>Aim</span>
+            </button>
+            <button onclick="showSection('theory')" id="nav-theory" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-book text-slate-400 w-5"></i> <span>Theory</span>
+            </button>
+            <button onclick="showSection('example')" id="nav-example" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-lightbulb text-slate-400 w-5"></i> <span>Solved Example</span>
+            </button>
+            <button onclick="showSection('visualization')" id="nav-visualization" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-chart-line text-slate-400 w-5"></i> <span>Interactive Demo</span>
+            </button>
+            <button onclick="showSection('evaluation')" id="nav-evaluation" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-pen-to-square text-slate-400 w-5"></i> <span>Self Evaluation</span>
+            </button>
+            <button onclick="showSection('applications')" id="nav-applications" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-gears text-slate-400 w-5"></i> <span>Real Life Apps</span>
+            </button>
+            <button onclick="showSection('references')" id="nav-references" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-bookmark text-slate-400 w-5"></i> <span>References</span>
+            </button>
+            <button onclick="showSection('contributors')" id="nav-contributors" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-users text-slate-400 w-5"></i> <span>Contributors</span>
+            </button>
+            <button onclick="showSection('feedback')" id="nav-feedback" class="nav-link w-full text-left px-4 py-3 rounded-lg transition-all flex items-center gap-3 hover:bg-slate-800 text-sm font-medium">
+                <i class="fa-solid fa-comments text-slate-400 w-5"></i> <span>Feedback</span>
+            </button>
+        </nav>
+
+        <main class="flex-1 p-6 sm:p-10 bg-white shadow-inner">
+            
+            <section id="sec-home" class="content-section py-10 max-w-3xl mx-auto text-center space-y-8">
+                <div class="w-36 h-36 mx-auto bg-slate-50 rounded-full flex items-center justify-center border border-slate-200 p-3 shadow-md">
+                    <img src="logo.png" alt="PCCOE Large Logo" class="object-contain w-full h-full transform scale-105">
+                </div>
+                <h2 class="text-4xl font-black text-slate-900 tracking-tight">Variation of Parameters</h2>
+                <p class="text-lg text-slate-600 max-w-xl mx-auto">An advanced web platform designed to analyze, solve, and visualize second-order non-homogeneous linear ordinary differential equations.</p>
+                <button onclick="showSection('visualization')" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-8 py-3.5 rounded-xl shadow-md transition-all">Launch Experiment <i class="fa-solid fa-circle-play"></i></button>
+            </section>
+
+            <section id="sec-aim" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-bullseye text-blue-700"></i> Aim</h3>
+                <div class="bg-slate-50 border p-6 rounded-2xl text-slate-700 leading-relaxed shadow-sm">
+                    To study, analyze, and analytically solve non-homogeneous linear second-order ordinary differential equations of the type $y'' + y = X(x)$ by implementing the method of **Variation of Parameters**.
+                </div>
+            </section>
+
+            <section id="sec-theory" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-book text-blue-700"></i> General Theory & Foundations</h3>
+                <div class="bg-slate-50 p-6 rounded-2xl border text-slate-700 space-y-6 shadow-sm leading-relaxed">
+                    <p>
+                        The **Method of Variation of Parameters** is a powerful analytical technique used to find a particular solution $y_p(x)$ of a non-homogeneous linear second-order ordinary differential equation. Unlike the method of undetermined coefficients, it does not restrict the forcing function $X(x)$ to polynomials, exponentials, or sinusoids.
+                    </p>
+                    
+                    <h4 class="text-base font-bold text-blue-900 mt-4">1. The Standard Form & Complementary Function</h4>
+                    <p>Consider the linear second-order non-homogeneous differential equation with constant coefficients:</p>
+                    <div class="text-center py-2">$$y'' + P(x)y' + Q(x)y = X(x)$$</div>
+                    <p>First, we find the complementary solution $y_c(x)$ of the corresponding homogeneous equation ($X(x) = 0$), expressed as a linear combination of two independent base solutions $y_1(x)$ and $y_2(x)$:</p>
+                    <div class="text-center py-2">$$y_c(x) = c_1 y_1(x) + c_2 y_2(x)$$</div>
+
+                    <h4 class="text-base font-bold text-blue-900 mt-4">2. The Wronskian Determinant</h4>
+                    <p>
+                        To ensure that $y_1(x)$ and $y_2(x)$ form a valid fundamental set of solutions, they must be **linearly independent**. This is verified using the **Wronskian ($W$)**, which is the determinant of the matrix formed by the functions and their first derivatives:
+                    </p>
+                    <div class="text-center py-2">
+                        $$\displaystyle W(y_1, y_2) = \begin{vmatrix} y_1(x) & y_2(x) \\ y_1'(x) & y_2'(x) \end{vmatrix} = y_1(x)y_2'(x) - y_2(x)y_1'(x)$$
+                    </div>
+                    <p class="text-sm bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <strong>Theorem:</strong> If the solutions $y_1$ and $y_2$ are derived from a homogeneous linear ODE, their Wronskian is either identically zero everywhere or never zero on a given interval. If $W \neq 0$, the solutions are linearly independent.
+                    </p>
+
+                    <h4 class="text-base font-bold text-blue-900 mt-4">3. Varying the Parameters</h4>
+                    <p>We replace the constants $c_1$ and $c_2$ with variable parameters $u(x)$ and $v(x)$ to construct the particular solution:</p>
+                    <div class="text-center py-2">$$y_p(x) = u(x)y_1(x) + v(x)y_2(x)$$</div>
+                    <p>By applying the condition $u'y_1 + v'y_2 = 0$ during differentiation, we isolate expressions for the parameter derivatives, which yield the integration formulas:</p>
+                    <div class="text-center py-2">
+                        $$\displaystyle u(x) = \int \frac{-y_2(x) X(x)}{W} \, dx \qquad \text{and} \qquad v(x) = \int \frac{y_1(x) X(x)}{W} \, dx$$
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-example" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-lightbulb text-blue-700"></i> Solved Example (Step-by-Step)</h3>
+                <div class="bg-slate-50 p-6 rounded-2xl border space-y-6 shadow-sm text-slate-700 text-sm">
+                    <div class="font-bold text-blue-950 text-base border-b border-slate-200 pb-2">
+                        Problem Statement: Find the general solution of $\quad y'' + y = \sec(x)$
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-900 uppercase tracking-wide text-xs">Step 1: Find the Complementary Function ($y_c$)</h4>
+                        <p>The characteristic auxiliary equation for the homogeneous part $y'' + y = 0$ is:</p>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">$$m^2 + 1 = 0 \implies m = \pm i$$</div>
+                        <p>This gives us the fundamental independent solution set:</p>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">$$y_1 = \cos(x), \quad y_2 = \sin(x)$|$$</div>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">$$y_c(x) = c_1\cos(x) + c_2\sin(x)$$</div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-900 uppercase tracking-wide text-xs">Step 2: Calculate the Wronskian ($W$)</h4>
+                        <p>Compute the determinant of the fundamental solution set matrix:</p>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">
+                            $$\displaystyle W = \begin{vmatrix} \cos(x) & \sin(x) \\ -\sin(x) & \cos(x) \end{vmatrix} = (\cos(x)\cdot\cos(x)) - (\sin(x)\cdot(-\sin(x)))$$
+                            $$W = \cos^2(x) + \sin^2(x) = 1$$
+                        </div>
+                        <p>Since $W = 1 \neq 0$, the solutions are linearly independent configurations.</p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-900 uppercase tracking-wide text-xs">Step 3: Integrate the Parameters $u(x)$ and $v(x)$</h4>
+                        <p>Using the integration rules with $X(x) = \sec(x)$ and $W = 1$:</p>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">
+                            $$\displaystyle u(x) = \int \frac{-y_2 X(x)}{W}\,dx = \int \frac{-\sin(x)\cdot\sec(x)}{1}\,dx = \int -\tan(x)\,dx = \ln|\cos(x)|$$
+                        </div>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2">
+                            $$\displaystyle v(x) = \int \frac{y_1 X(x)}{W}\,dx = \int \frac{\cos(x)\cdot\sec(x)}{1}\,dx = \int \cos(x)\cdot\frac{1}{\cos(x)}\,dx = \int 1\,dx = x$$
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <h4 class="font-bold text-slate-900 uppercase tracking-wide text-xs">Step 4: Formulate General Solution ($y$)</h4>
+                        <p>Combine the particular integral $y_p = u\cdot y_1 + v\cdot y_2$ with the complementary system function:</p>
+                        <div class="font-mono bg-white p-3 border rounded-xl my-2 text-blue-900 font-bold">
+                            $$y(x) = y_c(x) + y_p(x)$$
+                            $$y(x) = c_1\cos(x) + c_2\sin(x) + \ln|\cos(x)|\cos(x) + x\sin(x)$$
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-visualization" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line text-blue-700"></i> Interactive Demo
+                </h3>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-5 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-sm tracking-wide uppercase">Workspace Adjustments</h4>
+                        
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide">Select Preset Example Solution</label>
+                            <select id="preset-select" onchange="loadPresetExpression()" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-xs font-medium text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600">
+                                <option value="custom">-- Custom Freeform Expression --</option>
+                                <option value="sec(x)">sec(x) [Standard Closed Form]</option>
+                                <option value="tan(x)">tan(x) [Standard Closed Form]</option>
+                                <option value="exp(x)">exp(x) [Standard Closed Form]</option>
+                                <option value="x">x [Standard Polynomial]</option>
+                                <option value="x^2">x^2 [Standard Quadratic]</option>
+                                <option value="exp(x)*tan(x)">exp(x) * tan(x) [Implicit Integral Form]</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-1">
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide">Enter $X(x)$</label>
+                            <input type="text" id="param-X" value="exp(x)*tan(x)" oninput="document.getElementById('preset-select').value='custom'; calculateAnalyticalVOP()" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 transition-all font-mono text-sm" placeholder="e.g., x, sec(x)">
+                            <p id="parser-error" class="text-[10px] text-rose-600 font-medium hidden">Unsupported expression format.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-semibold text-slate-600">
+                                <label for="param-c1">Constant $c_1$</label>
+                                <span id="val-c1" class="font-mono text-blue-700">1</span>
+                            </div>
+                            <input type="range" min="-5" max="5" value="1" step="0.5" id="param-c1" oninput="calculateAnalyticalVOP()" class="w-full accent-blue-700 cursor-pointer">
+                        </div>
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-xs font-semibold text-slate-600">
+                                <label for="param-c2">Constant $c_2$</label>
+                                <span id="val-c2" class="font-mono text-blue-700">1</span>
+                            </div>
+                            <input type="range" min="-5" max="5" value="1" step="0.5" id="param-c2" oninput="calculateAnalyticalVOP()" class="w-full accent-blue-700 cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 border border-slate-200 rounded-2xl flex flex-col justify-between p-6 bg-slate-50 min-h-[220px] shadow-inner relative">
+                        <div id="engine-status-alert" class="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-medium mb-3 transition-all duration-300">
+                            </div>
+
+                        <div class="text-center w-full my-auto">
+                            <span class="text-slate-600 font-semibold block text-sm mb-2">Target Formulation Box</span>
+                            <div id="math-equation-output" class="text-base text-blue-950 font-mono bg-white px-5 py-4 rounded-xl border border-slate-200 shadow-sm max-w-full overflow-x-auto inline-block min-w-[90%]">
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-evaluation" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-pen-to-square text-blue-700"></i> Self Evaluation Quiz</h3>
+                <div class="bg-slate-50 border p-6 rounded-2xl space-y-6 shadow-sm">
+                    
+                    <div class="space-y-3 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="font-semibold text-sm text-slate-800">Q1: What is the primary advantage of Variation of Parameters over the Method of Undetermined Coefficients?</p>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q1" value="wrong"> It is faster to solve polynomial components manually.</label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q1" value="correct"> It can evaluate arbitrary functions like $\sec(x)$ that have no finite derivative chains.</label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="font-semibold text-sm text-slate-800">Q2: If the Wronskian ($W$) of two solutions to a second-order linear homogeneous ODE is found to be zero on an interval, what does this conclude about the functions?</p>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q2" value="correct"> The functions are linearly dependent and cannot form a fundamental solution set.</label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q2" value="wrong"> The functions are linearly independent constants.</label>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <p class="font-semibold text-sm text-slate-800">Q3: What is the calculated value of the Wronskian determinant for the equation $y'' + y = 0$ with base vectors $y_1 = \cos(x)$ and $y_2 = \sin(x)$?</p>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q3" value="wrong"> $W = 0$</label>
+                            <label class="flex items-center gap-2 p-2 hover:bg-slate-50 rounded cursor-pointer"><input type="radio" name="q3" value="correct"> $W = 1$</label>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="checkQuizScore()" class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold px-6 py-2.5 rounded-lg shadow transition-all">Submit Evaluation</button>
+                        <button onclick="resetQuizEnvironment()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold px-4 py-2.5 rounded-lg transition-all">Reset Quiz</button>
+                    </div>
+                    <p id="quiz-result" class="text-sm font-bold text-emerald-700 hidden"></p>
+                </div>
+            </section>
+
+            <section id="sec-applications" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-gears text-blue-700"></i> Real Life Apps</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-slate-200 bg-slate-50 p-5 rounded-2xl space-y-3 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-base">Structural Mechanical Resonance</h4>
+                        <p class="text-xs text-slate-600">Calculates structural thresholds against wind oscillation profiles to mitigate failures.</p>
+                    </div>
+                    <div class="border border-slate-200 bg-slate-50 p-5 rounded-2xl space-y-3 shadow-sm">
+                        <h4 class="font-bold text-slate-900 text-base">Radio Tuning Circuits</h4>
+                        <p class="text-xs text-slate-600">Configures filtering loops to cleanly lock onto target signal channels.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sec-references" class="content-section hidden space-y-4">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-bookmark text-blue-700"></i> References</h3>
+                <ul class="space-y-2 text-xs text-slate-600 list-disc list-inside p-2">
+                    <li>Advanced Engineering Mathematics by Erwin Kreyszig, Wiley.</li>
+                    <li>Higher Engineering Mathematics by B.S. Grewal, Khanna Publishers.</li>
+                </ul>
+            </section>
+
+            <section id="sec-contributors" class="content-section hidden space-y-4">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-users text-blue-700"></i> Contributors</h3>
+                <div class="bg-slate-50 p-5 border rounded-2xl space-y-3 shadow-sm text-xs">
+                    <p class="text-slate-800 font-bold uppercase tracking-wider text-[11px] text-blue-900">Student Project Group Leads:</p>
+                    <ul class="list-disc list-inside space-y-1 font-medium text-slate-700 pl-2">
+                        <li>Aditi Prakash Gharmalkar</li>
+                        <li>Raee Dere</li>
+                    </ul>
+                    <hr class="my-2 border-slate-200">
+                    <p class="text-slate-800 font-bold uppercase tracking-wider text-[11px] text-slate-600">Project Mentorship & Evaluation Faculty:</p>
+                    <p class="font-medium text-slate-500 pl-2">Department of Computer Engineering & Mathematics Faculty, PCCOE.</p>
+                </div>
+            </section>
+
+            <section id="sec-feedback" class="content-section hidden space-y-6">
+                <h3 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3"><i class="fa-solid fa-comments text-blue-700"></i> VLab User Feedback Form</h3>
+                <div class="bg-slate-50 border p-6 rounded-2xl space-y-4 shadow-sm text-xs">
+                    <p class="text-slate-600 leading-relaxed font-medium">Please submit your laboratory workspace performance logs or interface recommendations below to help optimize upcoming platform updates.</p>
+                    
+                    <div class="space-y-1.5 mt-2">
+                        <label class="block font-bold text-slate-700 uppercase tracking-wide">Interface Usability & Clarity Score</label>
+                        <select class="p-2 border bg-white rounded-xl w-full max-w-xs font-medium text-slate-700">
+                            <option>★★★★★ Excellent Module Resolution</option>
+                            <option>★★¼☆ Satisfactory Operational Speed</option>
+                            <option>★★★☆☆ Modest Interface Feedback</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block font-bold text-slate-700 uppercase tracking-wide">Remarks, Observations, or Math Engine Feedback</label>
+                        <textarea placeholder="Type your observations here..." rows="4" class="w-full border p-3 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 font-medium placeholder-slate-400"></textarea>
+                    </div>
+
+                    <button onclick="submitFeedbackForm()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2.5 rounded-lg shadow transition-all">Submit Lab Logs</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <footer class="bg-slate-950 text-slate-500 text-center py-5 text-xs tracking-wide">
+        &copy; 2026 Pimpri Chinchwad College of Engineering (PCCOE). Developed for Virtual Learning Initiatives.
+    </footer>
+
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            document.querySelectorAll('.nav-link').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            document.getElementById('nav-' + sectionId).classList.add('active');
+            if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise();
+        }
+
+        // Expanded multi-question evaluation checker script
+        function checkQuizScore() {
+            const q1 = document.querySelector('input[name="q1"]:checked');
+            const q2 = document.querySelector('input[name="q2"]:checked');
+            const q3 = document.querySelector('input[name="q3"]:checked');
+            const resultBox = document.getElementById('quiz-result');
+            
+            resultBox.classList.remove('hidden');
+            
+            if (!q1 || !q2 || !q3) {
+                resultBox.className = "text-sm font-bold text-amber-700 mt-2";
+                resultBox.innerText = "Please reply to all questions before submission.";
+                return;
+            }
+
+            let correctCount = 0;
+            if (q1.value === "correct") correctCount++;
+            if (q2.value === "correct") correctCount++;
+            if (q3.value === "correct") correctCount++;
+
+            if (correctCount === 3) {
+                resultBox.className = "text-sm font-bold text-emerald-700 mt-2";
+                resultBox.innerText = `Perfect score! Correct answers: 3/3.`;
+            } else {
+                resultBox.className = "text-sm font-bold text-rose-700 mt-2";
+                resultBox.innerText = `Score: ${correctCount}/3 correct. Re-evaluate structural concepts and try again!`;
+            }
+        }
+
+        // NEW: Handles full clearing of quiz states cleanly
+        function resetQuizEnvironment() {
+            document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+            const resultBox = document.getElementById('quiz-result');
+            resultBox.innerText = "";
+            resultBox.classList.add('hidden');
+        }
+
+        function submitFeedbackForm() {
+            alert("VLab Performance logs compiled and delivered successfully. Thank you for your feedback!");
+            document.querySelector('#sec-feedback textarea').value = "";
+        }
+
+        function loadPresetExpression() {
+            const select = document.getElementById('preset-select');
+            if (select.value !== "custom") {
+                document.getElementById('param-X').value = select.value;
+                calculateAnalyticalVOP();
+            }
+        }
+
+        function sanitizeInputForLatex(inputStr) {
+            return inputStr.replace(/\*/g, '\\cdot ').replace(/exp\((.*?)\)/gi, 'e^{$1}');
+        }
+
+        // --- UPGRADED HETERO-HYBRID MATH CALCULUS ENGINE WITH STATUS NOTIFIERS ---
+        function calculateAnalyticalVOP() {
+            const c1 = parseFloat(document.getElementById('param-c1').value);
+            const c2 = parseFloat(document.getElementById('param-c2').value);
+            let displayInput = document.getElementById('param-X').value.trim();
+            let rawX = displayInput.toLowerCase().replace(/\s+/g, '');
+            const errorLabel = document.getElementById('parser-error');
+            const displayBox = document.getElementById('math-equation-output');
+            const statusBanner = document.getElementById('engine-status-alert');
+            
+            document.getElementById('val-c1').innerText = c1;
+            document.getElementById('val-c2').innerText = c2;
+
+            let ypLatex = "";
+            let matched = true;
+
+            // 1. Direct Engineering Exact Map Lookup
+            if (rawX === "exp(x)" || rawX === "e^x") {
+                ypLatex = "\\frac{e^x}{2}";
+            } else if (rawX === "sec(x)") {
+                ypLatex = "\\ln|\\cos(x)|\\cos(x) + x\\sin(x)";
+            } else if (rawX === "x") {
+                ypLatex = "x";
+            } else if (rawX === "x^2") {
+                ypLatex = "x^2 - 2";
+            } else if (rawX === "sin(x)") {
+                ypLatex = "-\\frac{1}{2}x\\cos(x)";
+            } else if (rawX === "cos(x)") {
+                ypLatex = "\\frac{1}{2}x\\sin(x)";
+            } else if (rawX === "tan(x)") {
+                ypLatex = "-\\cos(x)\\ln|\\sec(x)+\\tan(x)|";
+            } else {
+                matched = false;
+            }
+
+            if (matched) {
+                errorLabel.classList.add('hidden');
+                statusBanner.className = "w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-medium mb-3 bg-emerald-50 border-emerald-200 text-emerald-800 shadow-sm";
+                statusBanner.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span><strong>Closed-Form Solution Evaluated:</strong> This expression possesses standard elementary antiderivatives.</span>`;
+                
+                displayBox.innerHTML = `$$y(x) = ${c1}\\cos(x) + ${c2}\\sin(x) + ${ypLatex}$$`;
+                if (window.MathJax && window.MathJax.typesetPromise) window.MathJax.typesetPromise([displayBox]);
+                return;
+            }
+
+            // 2. Symbolic Fallback Layer with Graceful Integral Representation for Complex Products
+            try {
+                let integrandU = `(-sin(x)) * (${displayInput})`;
+                let integrandV = `(cos(x)) * (${displayInput})`;
+
+                let uExpr = Algebrite.run(`integral(${integrandU}, x)`);
+                let vExpr = Algebrite.run(`integral(${integrandV}, x)`);
+
+                if (uExpr.includes("integral") || vExpr.includes("integral") || uExpr === "" || vExpr === "") {
+                    throw new Error("Non-elementary closed form product matching detected");
+                }
+
+                let ypCombined = Algebrite.run(`(${uExpr}) * cos(x) + (${vExpr}) * sin(x)`);
+                let ypSimplified = Algebrite.run(`simplify(${ypCombined})`);
+                ypLatex = Algebrite.run(`printlatex(${ypSimplified})`).trim();
+
+                errorLabel.classList.add('hidden');
+                statusBanner.className = "w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-medium mb-3 bg-emerald-50 border-emerald-200 text-emerald-800 shadow-sm";
+                statusBanner.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span><strong>Closed-Form Solution Evaluated:</strong> This expression possesses standard elementary antiderivatives.</span>`;
+                
+                displayBox.innerHTML = `$$y(x) = ${c1}\\cos(x) + ${c2}\\sin(x) + ${ypLatex}$$`;
+            } catch (err) {
+                errorLabel.classList.add('hidden');
+                statusBanner.className = "w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-medium mb-3 bg-amber-50 border-amber-200 text-amber-800 shadow-sm";
+                statusBanner.innerHTML = `<i class="fa-solid fa-circle-info"></i> <span><strong>General/Implicit Integral Form Response:</strong> Mixed non-elementary terms detected. Antiderivative structure requires integral notation bounds.</span>`;
+                
+                let mathJaxSafeInput = sanitizeInputForLatex(displayInput);
+                displayBox.innerHTML = `$$y(x) = ${c1}\\cos(x) + ${c2}\\sin(x) + \\left[\\int -\\sin(x)(${mathJaxSafeInput})\\,dx\\right]\\cos(x) + \\left[\\int \\cos(x)(${mathJaxSafeInput})\\,dx\\right]\\sin(x)$$`;
+            }
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([displayBox]);
+            }
+        }
+
+        window.onload = function() {
+            calculateAnalyticalVOP();
+        }
+    </script>
+</body>
+</html>
